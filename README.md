@@ -37,7 +37,7 @@
         "double_throw_ratio": 10,
         }
 ```
-表达的意思是：趋势向上的网格
+表达的意思是：趋势向上的网格（profit_ratio:5,double_throw_ratio:10）
 
 ![如果看不到图，请到wx群获取](https://s3.ax1x.com/2021/01/15/s0kMtg.png)
 
