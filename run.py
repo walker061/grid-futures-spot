@@ -4,6 +4,11 @@ from app.authorization import api_key,api_secret
 from data.runBetData import RunBetData
 from app.dingding import Message
 import time
+import os
+
+os.environ["http_proxy"] = "http://127.0.0.1:7890"
+os.environ["https_proxy"] = "http://127.0.0.1:7890"
+
 
 binan = BinanceAPI(api_key,api_secret)
 runbet = RunBetData()
@@ -62,15 +67,15 @@ class Run_Main():
                 time.sleep(2) # 为了不被币安api请求次数限制
 
 
-if __name__ == "__main__":
-     instance = Run_Main()
-     try:
-         instance.loop_run()
-     except Exception as e:
-         error_info = "报警：币种{coin},服务停止".format(coin=instance.coinType)
-         msg.dingding_warn(error_info)
+# if __name__ == "__main__":
+#      instance = Run_Main()
+#      try:
+#          instance.loop_run()
+#      except Exception as e:
+#          error_info = "报警：币种{coin},服务停止".format(coin=instance.coinType)
+#          msg.dingding_warn(error_info)
 
 #调试看报错运行下面，正式运行用上面       
-#if __name__ == "__main__":       
-#    instance = Run_Main()    
-#    instance.loop_run()
+if __name__ == "__main__":       
+   instance = Run_Main()    
+   instance.loop_run()
