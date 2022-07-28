@@ -2,7 +2,12 @@
 
 import requests, time, hmac, hashlib
 # from app.authorization import recv_window,api_secret,api_key
-from app.authorization import recv_window,api_secret,api_key
+# from authorization import recv_window,api_secret,api_key
+api_key = 'H8iKfklbudryNsXq0BiTSSmusTE2uC82u0tNBN1YhkuZZi25SCcGA9sDPv6SXXZF'
+api_secret = 'y7LVA14tYttp8t2zgfvBstnBZIn8f5pXgtxJiJMk8ksUFZYtQg6XW21DLLLQnBPR'
+recv_window = 5000
+
+dingding_token = "4cd30b570053d66f9e0a6224981c64ecf4e7d2abdddc66ea1ebc488e58b9d91c"
 
 try:
     from urllib import urlencode
@@ -11,10 +16,17 @@ except ImportError:
     from urllib.parse import urlencode
 
 class BinanceAPI(object):
-    BASE_URL = "https://www.binance.com/api/v1"
-    FUTURE_URL = "https://fapi.binance.com"
-    BASE_URL_V3 = "https://api.binance.com/api/v3"
-    PUBLIC_URL = "https://www.binance.com/exchange/public/product"
+    # 正式服务器
+    # BASE_URL = "https://www.binance.com/api/v1"
+    # FUTURE_URL = "https://fapi.binance.com"
+    # BASE_URL_V3 = "https://api.binance.com/api/v3"
+    # PUBLIC_URL = "https://www.binance.com/exchange/public/product"
+
+    # 测试服务器
+    BASE_URL = "https://testnet.binance.vision/api/v1"
+    FUTURE_URL = "https://testnet.binancefuture.com"
+    BASE_URL_V3 = "https://testnet.binance.vision/api/v3"
+    PUBLIC_URL = "https://testnet.binance.vision/exchange/public/product"
 
     def __init__(self, key, secret):
         self.key = key
@@ -132,6 +144,6 @@ class BinanceAPI(object):
 
 if __name__ == "__main__":
     instance = BinanceAPI(api_key,api_secret)
-    # print(instance.buy_limit("EOSUSDT",5,2))
-    # print(instance.get_ticker_price("WINGUSDT"))
-    print(instance.limit_future_order("SELL", "EOSUSDT", 2, 3))
+    print(instance.buy_limit("ETHUSDT",5,2))
+    print(instance.get_ticker_price("WINGUSDT"))
+    print(instance.limit_future_order("SELL", "ETHUSDT", 2, 3))

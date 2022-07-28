@@ -1,19 +1,19 @@
 {
     "runBet": {
-        "next_buy_price": 2,
-        "grid_sell_price": 3,
+        "next_buy_price": 1630,
+        "grid_sell_price": 1633,
         "spot_step": 0,
         "future_step": 0
     },
     "config": {
-        "profit_ratio": 5,
-        "double_throw_ratio": 5,
-        "cointype": "EOSUSDT",
+        "profit_ratio": 0.2,
+        "double_throw_ratio": 0.2,
+        "cointype": "ETHUSDT",
         "spot_quantity": [
-            7
+            1
         ],
         "future_quantity": [
-            7
+            1
         ]
     }
 }

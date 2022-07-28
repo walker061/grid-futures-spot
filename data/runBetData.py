@@ -1,10 +1,10 @@
 import os,json
 # linux
-data_path = os.getcwd()+"/data/data.json"
+# data_path = os.getcwd()+"/data/data.json"
 # 本地调试
 # data_path = os.getcwd()+""+"/data/data.json"
 # windows
-# data_path = os.getcwd() + "\data\data.json"
+data_path = os.getcwd() + "\data\data.json"
 
 class RunBetData:
 
@@ -37,6 +37,7 @@ class RunBetData:
 
     def get_cointype(self):
         data_json = self._get_json_data()
+        print(data_json["config"]["cointype"])
         return data_json["config"]["cointype"]
 
     def get_spot_quantity(self,exchange_method=True):
@@ -118,4 +119,4 @@ class RunBetData:
 if __name__ == "__main__":
     instance = RunBetData()
     # print(instance.modify_price(8.87,instance.get_step()-1))
-    print(instance.get_future_quantity())
+    print(instance.get_future_quantity(),instance.get_cointype())

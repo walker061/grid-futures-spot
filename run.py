@@ -25,20 +25,28 @@ class Run_Main():
 
     def loop_run(self):
         while True:
-            cur_market_price = binan.get_ticker_price(runbet.get_cointype()) # 当前交易对市价
+            cur_market_price = binan.get_ticker_price(runbet.get_cointype()) # 当前交易对市价            
             grid_buy_price = runbet.get_buy_price()  # 当前网格买入价格
             grid_sell_price = runbet.get_sell_price() # 当前网格卖出价格
             spot_quantity = runbet.get_spot_quantity()   # 现货买入量
             future_quantity = runbet.get_future_quantity()   # 期货买入量
             spot_step = runbet.get_spot_step() # 当前现货步数(手数)
             future_step = runbet.get_future_step() # 当前期货步数(手数)
-            
-            if grid_buy_price >= cur_market_price:   # 是否满足买入价
+            print("当前交易对市价:",cur_market_price,
+            "当前网格买入价格:",grid_buy_price,
+            "当前网格卖出价格",grid_sell_price,
+            "现货买入量",spot_quantity,
+            "期货买入量",future_quantity,
+            "当前现货步数(手数)",spot_step,
+            "当前期货步数(手数)",future_step)
+
+            if grid_buy_price >= cur_market_price:   # 是否满足买入价 满足买入现货
                 
-                if future_step != 0: # 说明期货有仓位 则卖出 仓位-1
+                if future_step != 0: # 说明期货有仓位 则卖出 仓位-1                   
                     profit_usdt = round((grid_buy_price / (1 - self.profitRatio/100) - grid_buy_price) * runbet.get_future_quantity(False),2) # 计算 本次盈利u数(买卖价差*数量)
                     future_res = msg.buy_limit_future_msg(self.coinType,runbet.get_future_quantity(False), grid_buy_price, profit_usdt) # 期货卖出
                     if future_res['orderId'] : runbet.set_future_step(future_step - 1) # 挂单成功，仓位 -1 
+                    print("期货有仓位 则卖出 仓位-1",future_res)
                     
                 res = msg.buy_limit_msg(self.coinType, spot_quantity, grid_buy_price) # 现货买入
                 if res['orderId']: # 挂单成功
@@ -75,7 +83,7 @@ class Run_Main():
 #          error_info = "报警：币种{coin},服务停止".format(coin=instance.coinType)
 #          msg.dingding_warn(error_info)
 
-#调试看报错运行下面，正式运行用上面       
+# 调试看报错运行下面，正式运行用上面       
 if __name__ == "__main__":       
    instance = Run_Main()    
    instance.loop_run()
