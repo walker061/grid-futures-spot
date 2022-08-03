@@ -52,7 +52,7 @@ class Run_Main():
                 if res['orderId']: # 挂单成功
                     runbet.set_spot_step(spot_step+1)
                     runbet.modify_price(grid_buy_price) #修改data.json中价格、当前步数
-                    time.sleep(60*1) # 挂单后，停止运行1分钟
+                    time.sleep(5*1) # 挂单后，停止运行1分钟
                 else:
                     break
 
@@ -67,7 +67,7 @@ class Run_Main():
                 if future_res['orderId']:
                     runbet.modify_price(grid_sell_price)#修改data.json中价格
                     runbet.set_future_step(future_step+1) 
-                    time.sleep(60*1)  # 挂单后，停止运行1分钟
+                    time.sleep(5*1)  # 挂单后，停止运行1分钟
                 else:
                     break
             else:

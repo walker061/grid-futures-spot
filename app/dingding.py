@@ -7,7 +7,7 @@ import requests,json
 # from app.BinanceAPI import BinanceAPI
 # linux
 from app.BinanceAPI import BinanceAPI
-from app.authorization import dingding_token, recv_window,api_secret,api_key
+from app.authorization import dingding_token, recv_window,api_secret,api_key,api_secret1,api_key1
 
 class Message:
 
@@ -58,7 +58,7 @@ class Message:
         :return:
         '''
         try:
-            res = BinanceAPI(api_key,api_secret).limit_future_order('SELL', market, quantity, price)
+            res = BinanceAPI(api_key1,api_secret1).limit_future_order('SELL', market, quantity, price)
             if res['orderId']:
                 buy_info = "报警：币种为：{cointype}。卖出做空价格为：{price}。数量为：{num}".format(cointype=market,price=price,num=quantity)
                 self.dingding_warn(buy_info)
@@ -77,7 +77,7 @@ class Message:
         :return:
         '''
         try:
-            res = BinanceAPI(api_key,api_secret).limit_future_order('BUY', market, quantity, price)
+            res = BinanceAPI(api_key1,api_secret1).limit_future_order('BUY', market, quantity, price)
             if res['orderId']:
                 buy_info = "报警：币种为：{cointype}。买入做多价格为：{price}。数量为：{num}。盈利USDT数为:{profit_usdt}".format(cointype=market,price=price,num=quantity,profit_usdt=profit_usdt)
                 self.dingding_warn(buy_info)
