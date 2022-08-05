@@ -26,6 +26,7 @@ class BinanceAPI(object):
     # 测试服务器
     BASE_URL = "https://testnet.binance.vision/api/v1"
     FUTURE_URL = "https://testnet.binancefuture.com"
+    FUTURE_URL_V1 = "https://testnet.binancefuture.com/fapi/v1"
     BASE_URL_V3 = "https://testnet.binance.vision/api/v3"
     PUBLIC_URL = "https://testnet.binance.vision/exchange/public/product"
 
@@ -39,6 +40,13 @@ class BinanceAPI(object):
 
     def get_ticker_price(self,market):
         path = "%s/ticker/price" % self.BASE_URL_V3
+        params = {"symbol":market}
+        res =  self._get_no_sign(path,params)
+        time.sleep(2)
+        return float(res['price'])
+    
+    def get_future_price(self,market):
+        path = "%s/ticker/price" % self.FUTURE_URL_V1
         params = {"symbol":market}
         res =  self._get_no_sign(path,params)
         time.sleep(2)
@@ -92,7 +100,39 @@ class BinanceAPI(object):
         params = self._order(market, quantity, side, price)
         return self._post(path, params)
 
-    ### ----私有函数---- ###
+    def market_future_order(self,side, market, quantity):
+    
+        ''' 合约市价单
+            :param side: 做多or做空 BUY SELL
+            :param market:对应symbol币种类型。如：BTCUSDT、ETHUSDT
+            :param quantity: 购买量
+            :param price: 开仓价格
+        '''
+        path = "%s/fapi/v1/order" % self.FUTURE_URL
+        #构建市价合约单参数
+        params = {
+         'side':side,
+         'quantity':quantity,
+         'type':"MARKET",
+         'symbol':market
+         }
+        return self._post(path, params)
+
+
+    def cancel_all_orders(self, symbol):
+        """
+        一键平仓
+        DELETE /fapi/v1/allOpenOrders (HMAC SHA256)
+        """
+        path = "%s/fapi/v1/allOpenOrders" % self.FUTURE_URL
+        #构建市价合约单参数
+        params = {
+         'symbol':symbol
+         }
+        return self._post(path, params)
+
+
+    ### ----私有函数---- ### 返回订单参数
     def _order(self, market, quantity, side, price=None):
         '''
         :param market:币种类型。如：BTCUSDT、ETHUSDT

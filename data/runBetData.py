@@ -1,10 +1,10 @@
 import os,json
 # linux
-data_path = os.getcwd()+"/data/data.json"
+# data_path = os.getcwd()+"/data/data.json"
 # 本地调试
 # data_path = os.getcwd()+""+"/data/data.json"
 # windows
-# data_path = os.getcwd() + "\data\data.json"
+data_path = os.getcwd() + "\data\data.json"
 
 class RunBetData:
 
@@ -83,6 +83,11 @@ class RunBetData:
         '''获取期货仓位数'''
         data_json = self._get_json_data()
         return data_json['runBet']['future_step']  
+    
+    def get_total_step(self):
+        '''获取总执行数数'''
+        data_json = self._get_json_data()
+        return data_json['runBet']['total_step']  
      
     def get_profit_ratio(self):
         '''获取补仓比率'''
@@ -108,6 +113,12 @@ class RunBetData:
         '''修改期货仓位数'''
         data_json = self._get_json_data()
         data_json['runBet']['future_step'] = future_step
+        self._modify_json_data(data_json)
+    
+    def set_total_step(self,total_step):
+        '''修改期货仓位数'''
+        data_json = self._get_json_data()
+        data_json['runBet']['total_step'] = total_step
         self._modify_json_data(data_json)
         
     def set_spot_step(self,spot_step):

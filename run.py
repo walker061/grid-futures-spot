@@ -6,8 +6,8 @@ from app.dingding import Message
 import time
 import os
 
-# os.environ["http_proxy"] = "http://127.0.0.1:7890"
-# os.environ["https_proxy"] = "http://127.0.0.1:7890"
+os.environ["http_proxy"] = "http://127.0.0.1:7890"
+os.environ["https_proxy"] = "http://127.0.0.1:7890"
 
 
 binan = BinanceAPI(api_key,api_secret)
@@ -25,65 +25,51 @@ class Run_Main():
 
     def loop_run(self):
         while True:
-            cur_market_price = binan.get_ticker_price(runbet.get_cointype()) # 当前交易对市价            
-            grid_buy_price = runbet.get_buy_price()  # 当前网格买入价格
-            grid_sell_price = runbet.get_sell_price() # 当前网格卖出价格
-            spot_quantity = runbet.get_spot_quantity()   # 现货买入量
-            future_quantity = runbet.get_future_quantity()   # 期货买入量
-            spot_step = runbet.get_spot_step() # 当前现货步数(手数)
-            future_step = runbet.get_future_step() # 当前期货步数(手数)
-            print("当前交易对市价:",cur_market_price,
-            "当前网格买入价格:",grid_buy_price,
-            "当前网格卖出价格",grid_sell_price,
-            "现货买入量",spot_quantity,
-            "期货买入量",future_quantity,
-            "当前现货步数(手数)",spot_step,
-            "当前期货步数(手数)",future_step)
+            cur_market_price = binan.get_future_price(runbet.get_cointype()) # 当前合约交易对市价
+            grid_sell_price = runbet.get_sell_price() # 网格开仓价
+            future_quantity = runbet.get_future_quantity()   # 做空币数
+            future_step = runbet.get_future_step() # 当前做空次数
+            total_step = runbet.get_total_step() #总执行次数
+            print("当前合约市价:",cur_market_price,           
+            "网格开仓价",grid_sell_price,
+            "设定做空币数",future_quantity,
+            "当前做空仓位",future_step,
+            "当前总执行次数",total_step
+            )
 
-            if grid_buy_price >= cur_market_price:   # 是否满足买入价 满足买入现货
+            if grid_sell_price >= cur_market_price:   # 网格开仓价>=市场价，需对冲，开空单
+                print("1.网格开仓价>=市场价，需对冲，准备开空单")
+                # 说明当前已有空单,不执行 
+                if future_step != 0: 
+                    print("2.当前仓位",future_step,"无需操作")    
+                # 当前没空单，开仓
+                else:               
+                    print("2.当前仓位",future_step,"执行开空操作")
+                    #市价开空
+                    future_res = msg.sell_market_future_msg(self.coinType, future_quantity) 
+                    if future_res['orderId']:                    
+                        runbet.set_future_step(future_step+1) 
+                        runbet.set_total_step(total_step+1)
+                        # 挂单后，停止运行1分钟
+                        time.sleep(5*1) 
                 
-                if future_step != 0: # 说明期货有仓位 则卖出 仓位-1                   
-                    profit_usdt = round((grid_buy_price / (1 - self.profitRatio/100) - grid_buy_price) * runbet.get_future_quantity(False),2) # 计算 本次盈利u数(买卖价差*数量)
-                    future_res = msg.buy_limit_future_msg(self.coinType,runbet.get_future_quantity(False), grid_buy_price, profit_usdt) # 期货卖出
-                    if future_res['orderId'] : runbet.set_future_step(future_step - 1) # 挂单成功，仓位 -1 
-                    print("期货有仓位 则卖出 仓位-1",future_res)
-                    
-                res = msg.buy_limit_msg(self.coinType, spot_quantity, grid_buy_price) # 现货买入
-                if res['orderId']: # 挂单成功
-                    runbet.set_spot_step(spot_step+1)
-                    runbet.modify_price(grid_buy_price) #修改data.json中价格、当前步数
-                    time.sleep(5*1) # 挂单后，停止运行1分钟
+            elif grid_sell_price < cur_market_price:  # 网格开仓价<市场价，无需对冲，平空单
+                print("1.网格开仓价<市场价，无需对冲，平空单")
+                # 有仓位，执行平仓
+                if future_step != 0:
+                    print("2.当前仓位",future_step,"执行平仓操作")
+                    msg.cancel_all_orders_msg(self.coinType)
+                    runbet.set_future_step(future_step-1) 
+                    runbet.set_total_step(total_step+1)
+                    # 挂单后，停止运行1分钟
+                    time.sleep(5*1) 
+                # 如果没仓位，退出
                 else:
-                    break
-
-            elif grid_sell_price < cur_market_price:  # 是否满足卖出价
-                
-                if spot_step != 0: # 说明现货有仓位 则卖出 仓位-1
-                    profit_usdt = round((grid_sell_price / (1 + self.profitRatio/100 ) - grid_sell_price) * runbet.get_future_quantity(False),2) # 计算 本次盈利u数(买卖价差*数量)
-                    spot_res = msg.sell_limit_msg(self.coinType,runbet.get_spot_quantity(False),grid_sell_price, profit_usdt) # 期货卖出开多
-                    if spot_res['orderId'] : runbet.set_spot_step(spot_step - 1) # 挂单成功，仓位 -1 
-  
-                future_res = msg.sell_limit_future_msg(self.coinType, future_quantity, grid_sell_price) #期货买入开空
-                if future_res['orderId']:
-                    runbet.modify_price(grid_sell_price)#修改data.json中价格
-                    runbet.set_future_step(future_step+1) 
-                    time.sleep(5*1)  # 挂单后，停止运行1分钟
-                else:
-                    break
+                    print("2.当前仓位",future_step,"无需操作")   
             else:
                 print("当前市价：{market_price}。未能满足交易,继续运行".format(market_price = cur_market_price))
                 time.sleep(2) # 为了不被币安api请求次数限制
-
-
-# if __name__ == "__main__":
-#      instance = Run_Main()
-#      try:
-#          instance.loop_run()
-#      except Exception as e:
-#          error_info = "报警：币种{coin},服务停止".format(coin=instance.coinType)
-#          msg.dingding_warn(error_info)
-
-# 调试看报错运行下面，正式运行用上面       
+# 运行
 if __name__ == "__main__":       
    instance = Run_Main()    
    instance.loop_run()

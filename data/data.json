@@ -1,9 +1,11 @@
 {
     "runBet": {
         "next_buy_price": 1604.02,
-        "grid_sell_price": 1610.44,
-        "spot_step": 2,
-        "future_step": 12
+        "grid_sell_price": 1650,
+        "stop_sell_price": 1200,
+        "spot_step": 0,
+        "future_step": 1,
+        "total_step": 1
     },
     "config": {
         "profit_ratio": 0.2,
@@ -13,7 +15,7 @@
             0.25
         ],
         "future_quantity": [
-            0.25
+            1
         ]
     }
 }
