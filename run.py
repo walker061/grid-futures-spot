@@ -30,19 +30,14 @@ class Run_Main():
             future_quantity = runbet.get_future_quantity()   # 做空币数
             future_step = runbet.get_future_step() # 当前做空次数
             total_step = runbet.get_total_step() #总执行次数
-            
             print("当前合约市价:",cur_market_price,           
             "网格开仓价",grid_sell_price,
             "设定做空币数",future_quantity,
             "当前做空仓位",future_step,
             "当前总执行次数",total_step
             )
-
-            msg.dingding_warn("当前合约市价:",cur_market_price,           
-            "网格开仓价",grid_sell_price,
-            "设定做空币数",future_quantity,
-            "当前做空仓位",future_step,
-            "当前总执行次数",total_step)
+            cur_info = "当前合约市价:{a1},网格开仓价:{a2},设定做空数量:{a3},当前做空仓位:{a4},当前总执行次数:{a5},".format(a1=cur_market_price,a2=grid_sell_price,a3=future_quantity,a4=future_step,a5=total_step)
+            msg.dingding_warn(cur_info)
 
             if grid_sell_price >= cur_market_price:   # 网格开仓价>=市场价，需对冲，开空单
                 print("1.网格开仓价>=市场价，需对冲，准备开空单")
