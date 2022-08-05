@@ -38,7 +38,7 @@ class Run_Main():
             "当前做空仓位",future_step,
             "当前总执行次数",total_step
             )
-            cur_info = "当前合约市价:{a1},网格开仓价:{a2},设定做空数量:{a3},当前做空仓位:{a4},当前总执行次数:{a5},".format(a1=cur_market_price,a2=grid_sell_price,a3=future_quantity,a4=future_step,a5=total_step)
+            cur_info = "报警：当前合约市价:{a1},网格开仓价:{a2},设定做空数量:{a3},当前做空仓位:{a4},当前总执行次数:{a5},".format(a1=cur_market_price,a2=grid_sell_price,a3=future_quantity,a4=future_step,a5=total_step)
             msg.dingding_warn(cur_info)           
 
             if grid_sell_price >= cur_market_price:   # 网格开仓价>=市场价，需对冲，开空单
@@ -51,7 +51,7 @@ class Run_Main():
                 else:               
                     print("2.当前仓位",future_step,"执行开空操作")
                     #市价开空
-                    future_res = msg.sell_market_future_msg(self.coinType, future_quantity) 
+                    future_res = msg.sell_market_future_msg(self.coinType, future_quantity,cur_market_price) 
                     if future_res['orderId']:                    
                         runbet.set_future_step(future_step+1) 
                         runbet.set_total_step(total_step+1)
@@ -63,7 +63,7 @@ class Run_Main():
                 # 有仓位，执行平仓
                 if future_step != 0:
                     print("2.当前仓位",future_step,"执行平仓操作")
-                    msg.cancel_all_orders_msg(self.coinType, future_quantity) 
+                    msg.cancel_all_orders_msg(self.coinType, future_quantity,cur_market_price) 
                     runbet.set_future_step(future_step-1) 
                     runbet.set_total_step(total_step+1)
                     # 挂单后，停止运行1分钟

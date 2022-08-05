@@ -49,7 +49,7 @@ class Message:
             self.dingding_warn(error_info+str(res))
             return res
 
-    def sell_market_future_msg(self,market, quantity):
+    def sell_market_future_msg(self,market, quantity,price):
         '''
         市价合约做空单，带有钉钉消息
         :param market: 交易对
@@ -59,7 +59,7 @@ class Message:
         try:
             res = BinanceAPI(api_key1,api_secret1).market_future_order('SELL', market, quantity)
             if res['orderId']:
-                buy_info = "报警：币种为：{cointype}。触发市价开空！数量为：{num}".format(cointype=market,num=quantity)
+                buy_info = "报警：币种为：{cointype}。触发市价{price}开空！数量为：{num}".format(cointype=market,price=price,num=quantity)
                 self.dingding_warn(buy_info+str(res))
                 return res
         except BaseException as e:
@@ -67,7 +67,7 @@ class Message:
             self.dingding_warn(error_info+str(res))
             return res
     
-    def cancel_all_orders_msg(self,market, quantity):
+    def cancel_all_orders_msg(self,market, quantity,price):
         '''
         平仓，带有钉钉消息
         :param market: 交易对
@@ -77,7 +77,7 @@ class Message:
         try:
             res = BinanceAPI(api_key1,api_secret1).market_future_order('BUY', market, quantity)
             if res['orderId']:
-                buy_info = "报警：币种为：{cointype}。触发市价平仓！数量为：{num}".format(cointype=market,num=quantity)
+                buy_info = "报警：币种为：{cointype}。触发市价{price}平仓！数量为：{num}".format(cointype=market,price=price,num=quantity)
                 self.dingding_warn(buy_info+str(res))
                 return res
         except BaseException as e:
