@@ -4,9 +4,9 @@ from app.authorization import api_key,api_secret
 from data.runBetData import RunBetData
 from app.dingding import Message
 import time
-import os
-import heartrate; 
-heartrate.trace(browser=True)
+# import os
+# import heartrate; 
+# heartrate.trace(browser=True)
 
 # os.environ["http_proxy"] = "http://127.0.0.1:7890"
 # os.environ["https_proxy"] = "http://127.0.0.1:7890"
