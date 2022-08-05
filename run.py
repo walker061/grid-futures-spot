@@ -58,7 +58,7 @@ class Run_Main():
                 # 有仓位，执行平仓
                 if future_step != 0:
                     print("2.当前仓位",future_step,"执行平仓操作")
-                    msg.cancel_all_orders_msg(self.coinType)
+                    msg.cancel_all_orders_msg(self.coinType, future_quantity) 
                     runbet.set_future_step(future_step-1) 
                     runbet.set_total_step(total_step+1)
                     # 挂单后，停止运行1分钟

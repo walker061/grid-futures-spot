@@ -67,21 +67,21 @@ class Message:
             self.dingding_warn(error_info+str(res))
             return res
     
-    def cancel_all_orders_msg(self,symbol):
+    def cancel_all_orders_msg(self,market, quantity):
         '''
-        一键平仓，带有钉钉消息
+        平仓，带有钉钉消息
         :param market: 交易对
         :param quantity: 数量
         :return:
         '''
         try:
-            res = BinanceAPI(api_key1,api_secret1).cancel_all_orders(symbol)
+            res = BinanceAPI(api_key1,api_secret1).market_future_order('BUY', market, quantity)
             if res['orderId']:
-                cancel_info = "报警：币种为：{cointype}。执行一键平仓！".format(cointype=symbol)
-                self.dingding_warn(cancel_info+str(res))
+                buy_info = "报警：币种为：{cointype}。触发市价平仓！数量为：{num}".format(cointype=market,num=quantity)
+                self.dingding_warn(buy_info+str(res))
                 return res
         except BaseException as e:
-            error_info = "报警：币种为：{cointype},。执行一键平仓失败！.api返回内容为:{reject}".format(cointype=symbol,reject=res['msg'])
+            error_info = "报警：币种为：{cointype},市价平仓失败.api返回内容为:{reject}".format(cointype=market,reject=res['msg'])
             self.dingding_warn(error_info+str(res))
             return res
         

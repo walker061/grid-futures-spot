@@ -118,20 +118,6 @@ class BinanceAPI(object):
          }
         return self._post(path, params)
 
-
-    def cancel_all_orders(self, symbol):
-        """
-        一键平仓
-        DELETE /fapi/v1/allOpenOrders (HMAC SHA256)
-        """
-        path = "%s/fapi/v1/allOpenOrders" % self.FUTURE_URL
-        #构建市价合约单参数
-        params = {
-         'symbol':symbol
-         }
-        return self._post(path, params)
-
-
     ### ----私有函数---- ### 返回订单参数
     def _order(self, market, quantity, side, price=None):
         '''
@@ -178,7 +164,9 @@ class BinanceAPI(object):
         query = self._sign(params)
         url = "%s" % (path)
         header = {"X-MBX-APIKEY": self.key}
-        return requests.post(url, headers=header, data=query,timeout=180, verify=True).json()
+        resp = requests.post(url, headers=header, data=query,timeout=180, verify=True).json()
+        print("resp: %s" % resp)
+        return resp
 
     def _format(self, price):
         return "{:.8f}".format(price)

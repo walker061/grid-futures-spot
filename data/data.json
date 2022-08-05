@@ -4,8 +4,8 @@
         "grid_sell_price": 1650,
         "stop_sell_price": 1200,
         "spot_step": 0,
-        "future_step": 1,
-        "total_step": 1
+        "future_step": 0,
+        "total_step": 0
     },
     "config": {
         "profit_ratio": 0.2,
