@@ -30,12 +30,19 @@ class Run_Main():
             future_quantity = runbet.get_future_quantity()   # 做空币数
             future_step = runbet.get_future_step() # 当前做空次数
             total_step = runbet.get_total_step() #总执行次数
+            
             print("当前合约市价:",cur_market_price,           
             "网格开仓价",grid_sell_price,
             "设定做空币数",future_quantity,
             "当前做空仓位",future_step,
             "当前总执行次数",total_step
             )
+
+            msg.dingding_warn("当前合约市价:",cur_market_price,           
+            "网格开仓价",grid_sell_price,
+            "设定做空币数",future_quantity,
+            "当前做空仓位",future_step,
+            "当前总执行次数",total_step)
 
             if grid_sell_price >= cur_market_price:   # 网格开仓价>=市场价，需对冲，开空单
                 print("1.网格开仓价>=市场价，需对冲，准备开空单")
@@ -51,7 +58,7 @@ class Run_Main():
                         runbet.set_future_step(future_step+1) 
                         runbet.set_total_step(total_step+1)
                         # 挂单后，停止运行1分钟
-                        time.sleep(5*1) 
+                        time.sleep(50*1) 
                 
             elif grid_sell_price < cur_market_price:  # 网格开仓价<市场价，无需对冲，平空单
                 print("1.网格开仓价<市场价，无需对冲，平空单")
@@ -62,13 +69,13 @@ class Run_Main():
                     runbet.set_future_step(future_step-1) 
                     runbet.set_total_step(total_step+1)
                     # 挂单后，停止运行1分钟
-                    time.sleep(5*1) 
+                    time.sleep(50*1) 
                 # 如果没仓位，退出
                 else:
                     print("2.当前仓位",future_step,"无需操作")   
             else:
                 print("当前市价：{market_price}。未能满足交易,继续运行".format(market_price = cur_market_price))
-                time.sleep(2) # 为了不被币安api请求次数限制
+                time.sleep(20) # 为了不被币安api请求次数限制
 # 运行
 if __name__ == "__main__":       
    instance = Run_Main()    
