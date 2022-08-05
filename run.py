@@ -5,6 +5,8 @@ from data.runBetData import RunBetData
 from app.dingding import Message
 import time
 import os
+import heartrate; 
+heartrate.trace(browser=True)
 
 # os.environ["http_proxy"] = "http://127.0.0.1:7890"
 # os.environ["https_proxy"] = "http://127.0.0.1:7890"
@@ -37,13 +39,14 @@ class Run_Main():
             "当前总执行次数",total_step
             )
             cur_info = "当前合约市价:{a1},网格开仓价:{a2},设定做空数量:{a3},当前做空仓位:{a4},当前总执行次数:{a5},".format(a1=cur_market_price,a2=grid_sell_price,a3=future_quantity,a4=future_step,a5=total_step)
-            msg.dingding_warn(cur_info)
+            msg.dingding_warn(cur_info)           
 
             if grid_sell_price >= cur_market_price:   # 网格开仓价>=市场价，需对冲，开空单
                 print("1.网格开仓价>=市场价，需对冲，准备开空单")
                 # 说明当前已有空单,不执行 
                 if future_step != 0: 
-                    print("2.当前仓位",future_step,"无需操作")    
+                    print("2.当前仓位",future_step,"无需操作")
+                    time.sleep(10*1)    
                 # 当前没空单，开仓
                 else:               
                     print("2.当前仓位",future_step,"执行开空操作")
@@ -67,10 +70,11 @@ class Run_Main():
                     time.sleep(50*1) 
                 # 如果没仓位，退出
                 else:
-                    print("2.当前仓位",future_step,"无需操作")   
+                    print("2.当前仓位",future_step,"无需操作")
+                    time.sleep(10*1)      
             else:
                 print("当前市价：{market_price}。未能满足交易,继续运行".format(market_price = cur_market_price))
-                time.sleep(20) # 为了不被币安api请求次数限制
+                time.sleep(20*1) # 为了不被币安api请求次数限制
 # 运行
 if __name__ == "__main__":       
    instance = Run_Main()    
