@@ -1,0 +1,8 @@
+1.后台python运行命令行
+nohup python3 -u run.py > test.out 2>&1 &
+2.追踪log
+tail -f test.out
+3.推荐服务器
+ Ubuntu 21.04 (GNU/Linux 5.11.0-16-generic x86_64)
+ 日本东京
+
