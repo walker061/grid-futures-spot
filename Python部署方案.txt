@@ -4,5 +4,6 @@ nohup python3 -u run.py > test.out 2>&1 &
 tail -f test.out
 3.推荐服务器
  Ubuntu 21.04 (GNU/Linux 5.11.0-16-generic x86_64)
- 日本东京
+ 日本东京     7ms
+ 美国洛杉矶   47ms
 
