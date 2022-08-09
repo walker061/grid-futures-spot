@@ -1,24 +1,12 @@
 {
     "runBet": {
-        "next_buy_price": 1604.02,    
-        "stop_sell_price": 1200,
-        "spot_step": 0,
-
-
-        
-        "grid_sell_price": 1770,
+        "initial_usdt_balance": 2735.19,
+        "grid_sell_price": 1740,
         "future_step": 0,
-        "total_step": 0
+        "total_step": 4
     },
     "config": {
-        "profit_ratio": 0.2,
-        "double_throw_ratio": 0.2,
         "cointype": "ETHUSDT",
-        "spot_quantity": [
-            0.25
-        ],
-        "future_quantity": [
-            1
-        ]
+        "future_quantity": 3
     }
 }

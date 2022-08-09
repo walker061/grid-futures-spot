@@ -57,22 +57,15 @@ class RunBetData:
             quantity = quantity_arr[-1]
         return quantity
 
-    def get_future_quantity(self,exchange_method=True):
-        '''
-        :param exchange: True 代表买入，取买入的仓位 False：代表卖出，取卖出应该的仓位
-        :return:
-        '''
-
+        # 获取做空数量
+    def get_future_quantity(self):
         data_json = self._get_json_data()
-        cur_step = data_json["runBet"]["future_step"] if exchange_method else data_json["runBet"]["future_step"] - 1 # 买入与卖出操作对应的仓位不同
-        quantity_arr = data_json["config"]["future_quantity"]
+        return data_json['config']['future_quantity']  
 
-        quantity = None
-        if cur_step < len(quantity_arr): # 当前仓位 > 设置的仓位 取最后一位
-            quantity = quantity_arr[0] if cur_step == 0 else quantity_arr[cur_step]
-        else:
-            quantity = quantity_arr[-1]
-        return quantity
+    def get_initial_usdt_balance(self):
+        '''获取USDT'''
+        data_json = self._get_json_data()
+        return data_json['runBet']['initial_usdt_balance']
 
     def get_spot_step(self):
         '''获取现货仓位数'''
@@ -130,4 +123,4 @@ class RunBetData:
 if __name__ == "__main__":
     instance = RunBetData()
     # print(instance.modify_price(8.87,instance.get_step()-1))
-    print(instance.get_future_quantity(),instance.get_cointype())
+    # print(instance.get_future_quantity(),instance.get_cointype())

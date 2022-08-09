@@ -27,6 +27,7 @@ class BinanceAPI(object):
     BASE_URL = "https://testnet.binance.vision/api/v1"
     FUTURE_URL = "https://testnet.binancefuture.com"
     FUTURE_URL_V1 = "https://testnet.binancefuture.com/fapi/v1"
+    FUTURE_URL_V2 = "https://testnet.binancefuture.com/fapi/v2"
     BASE_URL_V3 = "https://testnet.binance.vision/api/v3"
     PUBLIC_URL = "https://testnet.binance.vision/exchange/public/product"
 
@@ -44,7 +45,19 @@ class BinanceAPI(object):
         res =  self._get_no_sign(path,params)
         time.sleep(2)
         return float(res['price'])
-    
+
+    # 获取账户余额
+    def get_user_data_balance(self):
+        path = "%s/balance" % self.FUTURE_URL_V2
+        params = {"recvWindow": recv_window}
+        query = self._sign(params)
+        # print(query)
+        query = urlencode(query)
+        url = "%s?%s" % (path, query)
+        # print(url)
+        header = {"X-MBX-APIKEY": self.key}
+        return requests.get(url,headers=header, timeout=180, verify=True).json()
+
     def get_future_price(self,market):
         path = "%s/ticker/price" % self.FUTURE_URL_V1
         params = {"symbol":market}
@@ -149,7 +162,6 @@ class BinanceAPI(object):
 
     def _sign(self, params={}):
         data = params.copy()
-
         ts = int(1000 * time.time())
         data.update({"timestamp": ts})
         h = urlencode(data)
