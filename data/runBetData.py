@@ -72,6 +72,11 @@ class RunBetData:
         data_json = self._get_json_data()
         return data_json['runBet']['spot_step']
 
+    def get_cur_sell_orderid(self):
+        '''获取现货仓位数'''
+        data_json = self._get_json_data()
+        return data_json['runBet']['cur_sell_orderid']
+
     def get_future_step(self):
         '''获取期货仓位数'''
         data_json = self._get_json_data()
@@ -102,6 +107,13 @@ class RunBetData:
         self._modify_json_data(data_json)
         print("修改后的补仓价格为:{double}。修改后的网格价格为:{grid}".format(double=data_json["runBet"]["next_buy_price"],
                                                            grid=data_json["runBet"]["grid_sell_price"]))
+   
+    def set_cur_sell_orderid(self,cur_sell_orderid):
+        '''修改订单号'''
+        data_json = self._get_json_data()
+        data_json['runBet']['future_step'] = cur_sell_orderid
+        self._modify_json_data(data_json)
+    
     def set_future_step(self,future_step):
         '''修改期货仓位数'''
         data_json = self._get_json_data()

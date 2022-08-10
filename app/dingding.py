@@ -67,6 +67,24 @@ class Message:
             self.dingding_warn(error_info+str(res))
             return res
     
+    def sell_limit_future_msg(self,market, quantity,price):
+        '''
+         限价合约做空单，带有钉钉消息
+        :param market: 交易对
+        :param quantity: 数量
+        :return:
+        '''
+        try:
+            res = BinanceAPI(api_key1,api_secret1).limit_future_order('SELL', market, quantity,price)
+            if res['orderId']:
+                buy_info = "报警：币种为：{cointype}。触发限价{price}开空！数量为：{num}".format(cointype=market,price=price,num=quantity)
+                self.dingding_warn(buy_info+str(res))
+                return res
+        except BaseException as e:
+            error_info = "报警：币种为：{cointype},卖出做空空单失败.api返回内容为:{reject}".format(cointype=market,reject=res['msg'])
+            self.dingding_warn(error_info+str(res))
+            return res
+    
     def cancel_all_orders_msg(self,market, quantity,price):
         '''
         平仓，带有钉钉消息

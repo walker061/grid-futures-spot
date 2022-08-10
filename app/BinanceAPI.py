@@ -56,7 +56,9 @@ class BinanceAPI(object):
         url = "%s?%s" % (path, query)
         # print(url)
         header = {"X-MBX-APIKEY": self.key}
-        return requests.get(url,headers=header, timeout=180, verify=True).json()
+        res = requests.get(url,headers=header, timeout=180, verify=True).json()
+        time.sleep(2)
+        return res
 
     def get_future_price(self,market):
         path = "%s/ticker/price" % self.FUTURE_URL_V1
@@ -64,6 +66,30 @@ class BinanceAPI(object):
         res =  self._get_no_sign(path,params)
         time.sleep(2)
         return float(res['price'])
+
+    def get_future_openOrders(self,symbol):
+        path = "%s/openOrders" % self.FUTURE_URL_V1  
+        params = {"recvWindow": recv_window}
+        params = {"symbol": symbol}
+        query = self._sign(params)
+        query = urlencode(query)
+        url = "%s?%s" % (path, query)
+        header = {"X-MBX-APIKEY": self.key}
+        res = requests.get(url,headers=header, timeout=180, verify=True).json()
+        time.sleep(2)
+        return res
+    
+    def delete_all_open_orders(self,symbol):
+        path = "%s/allOpenOrders" % self.FUTURE_URL_V1  
+        params = {"recvWindow": recv_window}
+        params = {"symbol": symbol}
+        query = self._sign(params)
+        query = urlencode(query)
+        url = "%s?%s" % (path, query)
+        header = {"X-MBX-APIKEY": self.key}
+        res = requests.delete(url,headers=header, timeout=180, verify=True).json()
+        time.sleep(2)
+        return res
 
     def get_ticker_24hour(self,market):
         path = "%s/ticker/24hr" % self.BASE_URL_V3
@@ -101,7 +127,7 @@ class BinanceAPI(object):
         params = {'symbol':symbol, 'leverage': leverage}
         return self._post(path, params)
     
-    def limit_future_order(self,side, market, quantity, price):
+    def limit_future_order(self,side, symbol, quantity, price):
         
         ''' 合约限价单
             :param side: 做多or做空 BUY SELL
@@ -110,10 +136,10 @@ class BinanceAPI(object):
             :param price: 开仓价格
         '''
         path = "%s/fapi/v1/order" % self.FUTURE_URL
-        params = self._order(market, quantity, side, price)
+        params = self._order(symbol, quantity, side, price)
         return self._post(path, params)
 
-    def market_future_order(self,side, market, quantity):
+    def market_future_order(self,side, symbol, quantity):
     
         ''' 合约市价单
             :param side: 做多or做空 BUY SELL
@@ -127,12 +153,12 @@ class BinanceAPI(object):
          'side':side,
          'quantity':quantity,
          'type':"MARKET",
-         'symbol':market
+         'symbol':symbol
          }
         return self._post(path, params)
 
     ### ----私有函数---- ### 返回订单参数
-    def _order(self, market, quantity, side, price=None):
+    def _order(self, symbol, quantity, side, price=None):
         '''
         :param market:币种类型。如：BTCUSDT、ETHUSDT
         :param quantity: 购买量
@@ -149,7 +175,7 @@ class BinanceAPI(object):
         else:
             params["type"] = "MARKET"
 
-        params["symbol"] = market
+        params["symbol"] = symbol
         params["side"] = side
         params["quantity"] = '%.8f' % quantity
 
