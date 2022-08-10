@@ -27,8 +27,7 @@ class Run_Main():
     def loop_run(self):
         while True:
             cur_market_price = binan.get_future_price(runbet.get_cointype()) # 当前合约交易对市价
-            init_usdt= runbet.get_initial_usdt_balance() #初始USDT
-            cur_sell_orderid = runbet.get_cur_sell_orderid() #开仓合约ID
+            init_usdt= runbet.get_initial_usdt_balance() #初始USDT            
             grid_sell_price = runbet.get_sell_price() # 网格开仓价
             grid_sell_price1 = round(grid_sell_price* 1.001 ,3)
             grid_sell_price2 = round(grid_sell_price* 0.999 ,3)
@@ -39,16 +38,21 @@ class Run_Main():
             bjnow = now + datetime.timedelta(hours=8)
             now_str = now.strftime("%Y-%m-%d %H:%M:%S") #洛杉矶时间   
             bjnow_str = bjnow.strftime("%Y-%m-%d %H:%M:%S") #北京时间
-            balance_res = BinanceAPI(api_key1,api_secret1).get_user_data_balance() #当前账户USDT
-            open_orders = BinanceAPI(api_key1,api_secret1).get_future_openOrders(self.coinType) #当前账户挂单
-            # print("当前挂单",open_orders[0]['orderId'])
-
+            balance_res = BinanceAPI(api_key1,api_secret1).get_user_data_balance() #当前账户USDT            
+            account_res = BinanceAPI(api_key1,api_secret1).get_user_data_account() #当前账户状态    
+            
             #设置订单号
-            try:                
-                print("当前有订单",open_orders[0]['orderId'])
+            try: 
+                #有订单
+                open_orders = BinanceAPI(api_key1,api_secret1).get_future_openOrders(self.coinType) #当前账户挂单               
+                runbet.set_cur_sell_orderid(open_orders[0]['orderId'])
             except BaseException as e:
-                print("当前无订单")
-
+                #无订单
+                runbet.set_cur_sell_orderid(0)
+            cur_sell_orderid = runbet.get_cur_sell_orderid() #开仓合约ID
+            print(account_res)
+            print(cur_sell_orderid)
+                
             # delete_all_open_orders = BinanceAPI(api_key1,api_secret1).delete_all_open_orders(self.coinType) #关闭所有挂单
             # print("取消所有挂单",delete_all_open_orders)
 
@@ -59,7 +63,7 @@ class Run_Main():
             profit = float(balance_usdt) - init_usdt #计算盈利 
             r_action = "1"
            
-            if cur_market_price <= grid_sell_price and future_step == 0:   # 网格开仓价>=市场价且无仓位，无挂单，需对冲，开空单
+            if cur_market_price <= grid_sell_price and cur_sell_orderid == 0:   # 市场价<=网格开仓价且无挂单，需对冲，开空单
                 r_action = "市场价{a1}<=做空价{a2}且无仓位，需对冲，开空单".format(a1=cur_market_price,a2=grid_sell_price1)
                 cur_info = "报警：当前市价:{a1},网格价:{a2},做空价{b1},平仓价{b2},设定做空数量:{a3},当前做空仓位:{a4},当前总执行次数:{a5},执行操作:|{a9}|,当前洛杉矶服务器时间:{a6},当前服务器北京时间:{a7},当前盈亏:|{a8}USDT|".format(a1=cur_market_price,a2=grid_sell_price,a3=future_quantity,a4=future_step,a5=total_step,a6=now_str,a7=bjnow_str,a8=round(profit,3),a9=r_action,b1=grid_sell_price1,b2=grid_sell_price2)
                 print(cur_info)

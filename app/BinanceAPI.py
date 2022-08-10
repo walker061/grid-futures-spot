@@ -59,6 +59,21 @@ class BinanceAPI(object):
         res = requests.get(url,headers=header, timeout=180, verify=True).json()
         time.sleep(2)
         return res
+    
+    # 获取账户信息
+    def get_user_data_account(self):
+        path = "%s/account" % self.FUTURE_URL_V2
+        params = {"recvWindow": recv_window}
+        query = self._sign(params)
+        # print(query)
+        query = urlencode(query)
+        url = "%s?%s" % (path, query)
+        # print(url)
+        header = {"X-MBX-APIKEY": self.key}
+        res = requests.get(url,headers=header, timeout=180, verify=True).json()
+        time.sleep(2)
+        return res
+
 
     def get_future_price(self,market):
         path = "%s/ticker/price" % self.FUTURE_URL_V1
