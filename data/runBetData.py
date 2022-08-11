@@ -111,7 +111,7 @@ class RunBetData:
     def set_cur_sell_orderid(self,cur_sell_orderid):
         '''修改订单号'''
         data_json = self._get_json_data()
-        data_json['runBet']['future_step'] = cur_sell_orderid
+        data_json['runBet']['cur_sell_orderid'] = cur_sell_orderid
         self._modify_json_data(data_json)
     
     def set_future_step(self,future_step):

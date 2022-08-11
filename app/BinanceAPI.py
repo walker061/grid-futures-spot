@@ -43,7 +43,7 @@ class BinanceAPI(object):
         path = "%s/ticker/price" % self.BASE_URL_V3
         params = {"symbol":market}
         res =  self._get_no_sign(path,params)
-        time.sleep(2)
+        time.sleep(1)
         return float(res['price'])
 
     # 获取账户余额
@@ -57,7 +57,7 @@ class BinanceAPI(object):
         # print(url)
         header = {"X-MBX-APIKEY": self.key}
         res = requests.get(url,headers=header, timeout=180, verify=True).json()
-        time.sleep(2)
+        time.sleep(1)
         return res
     
     # 获取账户信息
@@ -71,7 +71,7 @@ class BinanceAPI(object):
         # print(url)
         header = {"X-MBX-APIKEY": self.key}
         res = requests.get(url,headers=header, timeout=180, verify=True).json()
-        time.sleep(2)
+        time.sleep(1)
         return res
 
 
@@ -79,7 +79,7 @@ class BinanceAPI(object):
         path = "%s/ticker/price" % self.FUTURE_URL_V1
         params = {"symbol":market}
         res =  self._get_no_sign(path,params)
-        time.sleep(2)
+        time.sleep(1)
         return float(res['price'])
 
     def get_future_openOrders(self,symbol):
@@ -91,7 +91,7 @@ class BinanceAPI(object):
         url = "%s?%s" % (path, query)
         header = {"X-MBX-APIKEY": self.key}
         res = requests.get(url,headers=header, timeout=180, verify=True).json()
-        time.sleep(2)
+        time.sleep(1)
         return res
     
     def delete_all_open_orders(self,symbol):
@@ -103,7 +103,7 @@ class BinanceAPI(object):
         url = "%s?%s" % (path, query)
         header = {"X-MBX-APIKEY": self.key}
         res = requests.delete(url,headers=header, timeout=180, verify=True).json()
-        time.sleep(2)
+        time.sleep(1)
         return res
 
     def get_ticker_24hour(self,market):
