@@ -8,10 +8,10 @@ from app.dingding import Message
 import time
 import datetime
 from time import strftime
-import os
+# import os
 
-os.environ["http_proxy"] = "http://127.0.0.1:7890"
-os.environ["https_proxy"] = "http://127.0.0.1:7890"
+# os.environ["http_proxy"] = "http://127.0.0.1:7890"
+# os.environ["https_proxy"] = "http://127.0.0.1:7890"
 
 
 binan = BinanceAPI(api_key,api_secret)
