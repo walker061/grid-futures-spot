@@ -95,8 +95,8 @@ class Run_Main():
                     # 挂单后，停止运行1分钟
                     time.sleep(5*1)
            
-            elif cur_market_price > grid_sell_price and future_step != 0 :  # 网格开仓价<市场价且有仓位，无需对冲，平空单
-                r_action = "市价{a1}>平仓价{a2}且有仓位，无需对冲，平空单".format(a1=cur_market_price,a2=grid_sell_price)
+            elif cur_market_price > grid_sell_price2 and future_step != 0 :  # 网格开仓价<市场价且有仓位，无需对冲，平空单
+                r_action = "市价{a1}>平仓价{a2}且有仓位，无需对冲，平空单".format(a1=cur_market_price,a2=grid_sell_price2)
                 cur_info = "报警：当前市价:{a1},网格价:{a2},做空价{b1},平仓价{a2},浮盈浮亏{b3},订单号{b4},设定做空数量:{a3},当前做空仓位:{a4},当前总执行次数:{a5},执行操作:|{a9}|,当前洛杉矶服务器时间:{a6},当前服务器北京时间:{a7},当前盈亏:|{a8}USDT|".format(a1=cur_market_price,a2=grid_sell_price,a3=future_quantity,a4=future_step,a5=total_step,a6=now_str,a7=bjnow_str,a8=round(profit,3),a9=r_action,b1=grid_sell_price1,b3=totalUnrealizedProfit,b4=cur_sell_orderid)
                 print(cur_info)
                 msg.dingding_warn(cur_info)   
