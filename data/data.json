@@ -1,7 +1,7 @@
 {
     "runBet": {
         "initial_usdt_balance": 2735.19,
-        "grid_sell_price": 1920,
+        "grid_sell_price": 1950,
         "future_step": 0,
         "total_step": 0,
         "cur_sell_orderid": 0
