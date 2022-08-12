@@ -77,7 +77,7 @@ class Run_Main():
            
             if cur_market_price <= grid_sell_price and cur_sell_orderid == 0:   # 市场价<=网格开仓价且无挂单，需对冲，开空单
                 r_action = "市场价{a1}<=网格价{a2}且无仓位，需对冲，开空单".format(a1=cur_market_price,a2=grid_sell_price)
-                cur_info = "报警：当前市价:{a1},网格价:{a2},做空价{b1},平仓价{a2},浮盈浮亏{b3},订单号{b4},设定做空数量:{a3},当前做空仓位:{a4},当前总执行次数:{a5},执行操作:|{a9}|,当前洛杉矶服务器时间:{a6},当前服务器北京时间:{a7},当前盈亏:|{a8}USDT|".format(a1=cur_market_price,a2=grid_sell_price,a3=future_quantity,a4=future_step,a5=total_step,a6=now_str,a7=bjnow_str,a8=round(profit,3),a9=r_action,b1=grid_sell_price1,b3=totalUnrealizedProfit,b4=cur_sell_orderid)
+                cur_info = "报警：当前市价:{a1},网格价:{a2},做空价{b1},平仓价{b2},浮盈浮亏{b3},订单号{b4},设定做空数量:{a3},当前做空仓位:{a4},当前总执行次数:{a5},执行操作:|{a9}|,当前洛杉矶服务器时间:{a6},当前服务器北京时间:{a7},当前盈亏:|{a8}USDT|".format(a1=cur_market_price,a2=grid_sell_price,a3=future_quantity,a4=future_step,a5=total_step,a6=now_str,a7=bjnow_str,a8=round(profit,3),a9=r_action,b1=grid_sell_price1,b2=grid_sell_price2,b3=totalUnrealizedProfit,b4=cur_sell_orderid)
                 print(cur_info)
                 msg.dingding_warn(cur_info)   
                 #市价开空
@@ -108,7 +108,7 @@ class Run_Main():
                     # 挂单后，停止运行1分钟
                     time.sleep(5*1)            
             else:
-                r_action = ("市价{a1},做空价{a2},平仓价{a3},无需操作,继续运行").format(a1=cur_market_price,a2=grid_sell_price1,a3=grid_sell_price)
+                r_action = ("市价{a1},做空价{a2},平仓价{a3},无需操作,继续运行").format(a1=cur_market_price,a2=grid_sell_price1,a3=grid_sell_price2)
                 cur_info = "报警：当前市价:{a1},网格价:{a2},做空价{b1},平仓价{a2},浮盈浮亏{b3},订单号{b4},设定做空数量:{a3},当前做空仓位:{a4},当前总执行次数:{a5},执行操作:|{a9}|,当前洛杉矶服务器时间:{a6},当前服务器北京时间:{a7},当前盈亏:|{a8}USDT|".format(a1=cur_market_price,a2=grid_sell_price,a3=future_quantity,a4=future_step,a5=total_step,a6=now_str,a7=bjnow_str,a8=round(profit,3),a9=r_action,b1=grid_sell_price1,b3=totalUnrealizedProfit,b4=cur_sell_orderid)
                 print(cur_info)
                 msg.dingding_warn(cur_info)  
