@@ -1,5 +1,5 @@
 import os,json
-# linux
+# linux /root/grid-futures-spot/data/data.json
 data_path = os.getcwd()+"/data/data.json"
 # 本地调试
 # data_path = os.getcwd()+""+"/data/data.json"
