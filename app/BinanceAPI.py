@@ -2,7 +2,13 @@
 
 import requests, time, hmac, hashlib
 # from app.authorization import recv_window,api_secret,api_key
-from app.authorization import recv_window,api_secret,api_key
+# from authorization import recv_window,api_secret,api_key
+api_key = 'H8iKfklbudryNsXq0BiTSSmusTE2uC82u0tNBN1YhkuZZi25SCcGA9sDPv6SXXZF'
+api_secret = 'y7LVA14tYttp8t2zgfvBstnBZIn8f5pXgtxJiJMk8ksUFZYtQg6XW21DLLLQnBPR'
+api_key1 = 'bfc257bd473d2bbbb5641563748ba410c3e2c71e9924ef505f6799d63b7d96ae'
+api_secret1 = 'c8fd30610b6cd1f2559e3ad2a19bf4669144aeaee952ec71fb2ce0e5304e0c50'
+recv_window = 5000
+dingding_token = "4cd30b570053d66f9e0a6224981c64ecf4e7d2abdddc66ea1ebc488e58b9d91c"
 
 try:
     from urllib import urlencode
@@ -11,10 +17,19 @@ except ImportError:
     from urllib.parse import urlencode
 
 class BinanceAPI(object):
-    BASE_URL = "https://www.binance.com/api/v1"
-    FUTURE_URL = "https://fapi.binance.com"
-    BASE_URL_V3 = "https://api.binance.com/api/v3"
-    PUBLIC_URL = "https://www.binance.com/exchange/public/product"
+    # 正式服务器
+    # BASE_URL = "https://www.binance.com/api/v1"
+    # FUTURE_URL = "https://fapi.binance.com"
+    # BASE_URL_V3 = "https://api.binance.com/api/v3"
+    # PUBLIC_URL = "https://www.binance.com/exchange/public/product"
+
+    # 测试服务器
+    BASE_URL = "https://testnet.binance.vision/api/v1"
+    FUTURE_URL = "https://testnet.binancefuture.com"
+    FUTURE_URL_V1 = "https://testnet.binancefuture.com/fapi/v1"
+    FUTURE_URL_V2 = "https://testnet.binancefuture.com/fapi/v2"
+    BASE_URL_V3 = "https://testnet.binance.vision/api/v3"
+    PUBLIC_URL = "https://testnet.binance.vision/exchange/public/product"
 
     def __init__(self, key, secret):
         self.key = key
@@ -27,9 +42,69 @@ class BinanceAPI(object):
     def get_ticker_price(self,market):
         path = "%s/ticker/price" % self.BASE_URL_V3
         params = {"symbol":market}
-        res =  self._get_no_sign(path,params)
-        time.sleep(2)
+        time.sleep(1)
+        res =  self._get_no_sign(path,params)        
         return float(res['price'])
+
+    # 获取账户余额
+    def get_user_data_balance(self):
+        path = "%s/balance" % self.FUTURE_URL_V2
+        params = {"recvWindow": recv_window}
+        query = self._sign(params)
+        # print(query)
+        query = urlencode(query)
+        url = "%s?%s" % (path, query)
+        # print(url)
+        header = {"X-MBX-APIKEY": self.key}
+        time.sleep(1)
+        res = requests.get(url,headers=header, timeout=180, verify=True).json()        
+        return res
+    
+    # 获取账户信息
+    def get_user_data_account(self):
+        path = "%s/account" % self.FUTURE_URL_V2
+        params = {"recvWindow": recv_window}
+        query = self._sign(params)
+        # print(query)
+        query = urlencode(query)
+        url = "%s?%s" % (path, query)
+        # print(url)
+        header = {"X-MBX-APIKEY": self.key}
+        time.sleep(1)
+        res = requests.get(url,headers=header, timeout=180, verify=True).json()        
+        return res
+
+
+    def get_future_price(self,market):
+        path = "%s/ticker/price" % self.FUTURE_URL_V1
+        params = {"symbol":market}
+        time.sleep(1)
+        res =  self._get_no_sign(path,params)        
+        return float(res['price'])
+
+    def get_future_openOrders(self,symbol):
+        path = "%s/openOrders" % self.FUTURE_URL_V1  
+        params = {"recvWindow": recv_window}
+        params = {"symbol": symbol}
+        query = self._sign(params)
+        query = urlencode(query)
+        url = "%s?%s" % (path, query)
+        header = {"X-MBX-APIKEY": self.key}
+        time.sleep(1)
+        res = requests.get(url,headers=header, timeout=180, verify=True).json()        
+        return res
+    
+    def delete_all_open_orders(self,symbol):
+        path = "%s/allOpenOrders" % self.FUTURE_URL_V1  
+        params = {"recvWindow": recv_window}
+        params = {"symbol": symbol}
+        query = self._sign(params)
+        query = urlencode(query)
+        url = "%s?%s" % (path, query)
+        header = {"X-MBX-APIKEY": self.key}
+        time.sleep(1)
+        res = requests.delete(url,headers=header, timeout=180, verify=True).json()        
+        return res
 
     def get_ticker_24hour(self,market):
         path = "%s/ticker/24hr" % self.BASE_URL_V3
@@ -67,7 +142,7 @@ class BinanceAPI(object):
         params = {'symbol':symbol, 'leverage': leverage}
         return self._post(path, params)
     
-    def limit_future_order(self,side, market, quantity, price):
+    def limit_future_order(self,side, symbol, quantity, price):
         
         ''' 合约限价单
             :param side: 做多or做空 BUY SELL
@@ -76,11 +151,29 @@ class BinanceAPI(object):
             :param price: 开仓价格
         '''
         path = "%s/fapi/v1/order" % self.FUTURE_URL
-        params = self._order(market, quantity, side, price)
+        params = self._order(symbol, quantity, side, price)
         return self._post(path, params)
 
-    ### ----私有函数---- ###
-    def _order(self, market, quantity, side, price=None):
+    def market_future_order(self,side, symbol, quantity):
+    
+        ''' 合约市价单
+            :param side: 做多or做空 BUY SELL
+            :param market:对应symbol币种类型。如：BTCUSDT、ETHUSDT
+            :param quantity: 购买量
+            :param price: 开仓价格
+        '''
+        path = "%s/fapi/v1/order" % self.FUTURE_URL
+        #构建市价合约单参数
+        params = {
+         'side':side,
+         'quantity':quantity,
+         'type':"MARKET",
+         'symbol':symbol
+         }
+        return self._post(path, params)
+
+    ### ----私有函数---- ### 返回订单参数
+    def _order(self, symbol, quantity, side, price=None):
         '''
         :param market:币种类型。如：BTCUSDT、ETHUSDT
         :param quantity: 购买量
@@ -97,7 +190,7 @@ class BinanceAPI(object):
         else:
             params["type"] = "MARKET"
 
-        params["symbol"] = market
+        params["symbol"] = symbol
         params["side"] = side
         params["quantity"] = '%.8f' % quantity
 
@@ -110,7 +203,6 @@ class BinanceAPI(object):
 
     def _sign(self, params={}):
         data = params.copy()
-
         ts = int(1000 * time.time())
         data.update({"timestamp": ts})
         h = urlencode(data)
@@ -125,13 +217,15 @@ class BinanceAPI(object):
         query = self._sign(params)
         url = "%s" % (path)
         header = {"X-MBX-APIKEY": self.key}
-        return requests.post(url, headers=header, data=query,timeout=180, verify=True).json()
+        resp = requests.post(url, headers=header, data=query,timeout=180, verify=True).json()
+        print("resp: %s" % resp)
+        return resp
 
     def _format(self, price):
         return "{:.8f}".format(price)
 
 if __name__ == "__main__":
     instance = BinanceAPI(api_key,api_secret)
-    # print(instance.buy_limit("EOSUSDT",5,2))
-    # print(instance.get_ticker_price("WINGUSDT"))
-    print(instance.limit_future_order("SELL", "EOSUSDT", 2, 3))
+    print(instance.buy_limit("ETHUSDT",5,2))
+    print(instance.get_ticker_price("WINGUSDT"))
+    print(instance.limit_future_order("SELL", "ETHUSDT", 2, 3))

@@ -1,0 +1,37 @@
+1.后台python运行命令行
+nohup python3 -u run.py > test.out 2>&1 &
+2.追踪log
+tail -f test.out
+3.推荐服务器
+ Ubuntu 21.04 (GNU/Linux 5.11.0-16-generic x86_64)
+ 日本东京     7ms
+ 美国洛杉矶   47ms
+4.！！！进程守护！！！
+ 参考链接
+https://blog.p2hp.com/archives/8582   
+在 Ubuntu 上安装和配置 Supervisor
+ 安装
+sudo apt install supervisor
+ 状态查看
+sudo systemctl status supervisor
+ 修改子配置文件
+nano /etc/supervisor/conf.d/binance.conf 
+[program:binance]
+command=python3 -u /root/grid-futures-spot/run.py
+autostart=true
+autorestart=true
+startretries=3
+stderr_logfile=root/grid-futures-spot/binance.err.log
+stdout_logfile=root/grid-futures-spot/binance.out.log
+ 更新程序配置
+sudo supervisorctl reread
+ 运行更新后的进程
+sudo supervisorctl update
+ Supervisor 提供了一个基于 Web 的界面来管理所有进程，但默认情况下它是禁用的。您可以通过编辑文件 /etc/supervisor/supervisord.conf 来启用它:
+nano /etc/supervisor/supervisord.conf
+ 添加以下行:
+[inet_http_server]
+port=*:9001
+username=admin
+password=admin
+
